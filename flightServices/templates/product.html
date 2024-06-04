@@ -1,0 +1,195 @@
+<!DOCTYPE html><head>
+    <title>My Awesome Site</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .product_div {
+            margin-bottom: 20px;
+        }
+
+        .report_search {
+            display: flex;
+            align-items: center;
+        }
+
+        .repo_input {
+            padding: 8px;
+            width: 200px;
+        }
+
+        .rp_sch {
+            margin-left: 10px;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .row > div {
+            flex: 1 1 calc(33.333% - 20px); /* 3 items per row, with 20px gap */
+            box-sizing: border-box;
+        }
+
+        .reportdetail_main {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .report_detail {
+            text-align: center;
+        }
+
+        .repo_img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .prod_title {
+            font-weight: bold;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        .d-none {
+            display: none;
+        }    
+        
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1> Hello, This is from Index.html</h1>
+    <div class="product_div">
+    <div class="d-flex justify-content-between align-items-center searchmain mb-3">
+        <h3 class="product_h1">Reports</h3>
+        <form action="" class="report_search">
+            <input type="text" placeholder="Search Reports" name="search" id="search_filter" class="repo_input" autocomplete="off">
+            <i class="fa fa-search rp_sch" aria-hidden="true"></i>
+        </form>
+    </div>
+    <div class="row productList">
+       {% for product in products %}
+        <div class="col-lg-2 col-sm-6 col-md-3 {{ product.title|slugify}} products">
+            <div class="reportdetail_main">
+                <div class="report_detail">
+                    <img class="repo_img"  src="#"/>
+                </div>
+                <div class="results">
+                    <p class="prod_title {{ product.title|slugify }}">{{product.title}}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <div class="noresult">
+            <p class="noresult text-center">No result found</p>
+        </div>
+    </div>
+    </div>
+   
+<script>
+    $("#search_filter").keypress(function() {
+        if (event.which === 13){
+            event.preventDefault();
+            return false;
+        }
+    });
+
+    var productListClone;
+    $(document).ready(function(){
+        productListClone = $('.productList').clone();
+        console.log('productListClone====',productListClone)
+    });
+
+    // $("#search_filter").keyup(function() {
+    //     console.log('search called---');
+    //     var filter = $(this).val().toLowerCase().trim();
+    //     var count = 0;
+
+    //     // Arrays to hold products that start with and contain the search term
+    //     var startsWithMatches = [];
+    //     var containsMatches = [];
+
+    //     // Hide all products initially and separate them based on the search term
+    //     $('.results .prod_title').each(function() {
+    //         var title = $(this).text().toLowerCase();
+    //         var productContainer = $(this).closest('.reportdetail_main').parent();
+
+    //         if (filter === "") {
+    //             // Show all products if search term is empty
+    //             productContainer.removeClass('d-none');
+    //         } else if (title.startsWith(filter)) {
+    //             startsWithMatches.push(productContainer);
+    //             productContainer.addClass('d-none'); // Hide initially to reorder later
+    //         } else if (title.includes(filter)) {
+    //             containsMatches.push(productContainer);
+    //             productContainer.addClass('d-none'); // Hide initially to reorder later
+    //         } else {
+    //             productContainer.addClass('d-none');
+    //         }
+    //     });
+
+    //     // Combine the arrays to maintain the desired order
+    //     var sortedMatches = startsWithMatches.concat(containsMatches);
+
+    //     // Append the sorted elements back to the row container
+    //     var rowContainer = $('.row');
+    //     sortedMatches.forEach(function(productContainer) {
+    //         productContainer.removeClass('d-none');
+    //         rowContainer.append(productContainer);
+    //     });
+    // });
+    $("#search_filter").keyup(function() {
+        console.log('search called---');
+        var filter = $(this).val().toLowerCase().trim();
+        var count = 0;
+
+        // Arrays to hold products that start with and contain the search term
+        var startsWithMatches = [];
+        var containsMatches = [];
+
+        // Hide all products initially and separate them based on the search term
+        $('.results .prod_title').each(function() {
+            var title = $(this).text().toLowerCase();
+            var productContainer = $(this).closest('.products');
+
+            if (filter === "") {
+                // Show all products if search term is empty
+                productContainer.removeClass('d-none');
+                count++;
+            } else if (title.startsWith(filter)) {
+                startsWithMatches.push(productContainer);
+                productContainer.addClass('d-none'); // Hide initially to reorder later
+                count++;
+            } else if (title.includes(filter)) {
+                containsMatches.push(productContainer);
+                productContainer.addClass('d-none'); // Hide initially to reorder later
+                count++;
+            } else {
+                productContainer.addClass('d-none');
+            }
+        });
+
+        // Combine the arrays to maintain the desired order
+        var sortedMatches = startsWithMatches.concat(containsMatches);
+
+        // Append the sorted elements back to the row container
+        var rowContainer = $(document).find('.productList');
+        sortedMatches.forEach(function(productContainer) {
+            productContainer.removeClass('d-none');
+            rowContainer.append(productContainer);
+        });
+        if (count === 0){
+            $('.noresult').css('display','block');
+        }else {
+            $('.noresult').css('display','none');
+        }
+    });
+</script>
+
+</body>
+</html>
